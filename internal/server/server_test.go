@@ -57,9 +57,9 @@ func setupTest(t *testing.T, fn func(config *Config)) (client api.LogClient,
 	client = api.NewLogClient(cc)
 	return client, cfg, func() {
 		server.Stop()
-		cc.Close()
-		l.Close()
-		cLog.Close()
+		_ = cc.Close()
+		_ = l.Close()
+		_ = cLog.Close()
 	}
 }
 
