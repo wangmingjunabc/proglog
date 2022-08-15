@@ -12,11 +12,11 @@ import (
 
 func TestLog(t *testing.T) {
 	for scenario, fn := range map[string]func(t *testing.T, log *Log){
-		//"append and read a record success": testAppendRead,
-		//"offset out of range error": testOutOfRangeErr,
-		"init the existing segments": testInitExisting,
-		//"read": testReader,
-		//"truncate": testTruncate,
+		"append and read a record success": testAppendRead,
+		"offset out of range error":        testOutOfRangeErr,
+		"init the existing segments":       testInitExisting,
+		"read":                             testReader,
+		"truncate":                         testTruncate,
 	} {
 		t.Run(scenario, func(t *testing.T) {
 			dir, err := ioutil.TempDir("", "store-test")
@@ -49,7 +49,8 @@ func testAppendRead(t *testing.T, log *Log) {
 func testOutOfRangeErr(t *testing.T, log *Log) {
 	read, err := log.Read(1)
 	require.Nil(t, read)
-	require.Error(t, err)
+	apiError := err.(log_v1.ErrOutOfRange)
+	require.Equal(t, uint64(1), apiError.Offset)
 }
 
 func testInitExisting(t *testing.T, log *Log) {

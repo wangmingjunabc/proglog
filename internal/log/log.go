@@ -1,7 +1,6 @@
 package log
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path"
@@ -22,10 +21,10 @@ type Log struct {
 }
 
 func NewLog(dir string, c Config) (*Log, error) {
-	if c.Segment.MaxStoreBytes == 10 {
+	if c.Segment.MaxStoreBytes == 0 {
 		c.Segment.MaxStoreBytes = 1024
 	}
-	if c.Segment.MaxIndexBytes == 10 {
+	if c.Segment.MaxIndexBytes == 0 {
 		c.Segment.MaxIndexBytes = 1024
 	}
 	l := &Log{
@@ -97,7 +96,7 @@ func (l *Log) Read(off uint64) (*log_v1.Record, error) {
 		}
 	}
 	if s == nil || s.nextOffset < off {
-		return nil, fmt.Errorf("offset out of range: %d", off)
+		return nil, log_v1.ErrOutOfRange{Offset: off}
 	}
 	return s.Read(off)
 }
