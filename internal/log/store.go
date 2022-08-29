@@ -50,7 +50,7 @@ func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
 
 func (s *store) Read(pos uint64) ([]byte, error) {
 	s.mu.Lock()
-	s.mu.Unlock()
+	defer s.mu.Unlock()
 	if err := s.buf.Flush(); err != nil {
 		return nil, err
 	}
